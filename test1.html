@@ -1,0 +1,83 @@
+<?php
+	require('postdemo.php'); 
+	$sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 1";
+?>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vohongminh</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+
+
+
+<?php
+
+if ($result = $conn->query($sql)) {
+    while ($row = $result->fetch_assoc()) {    
+        $row_value1 = $row["NhietDo"];
+        $datetime = $row['DoAm']; 
+   
+	 $time= strtotime($row['time_act'])*1000; // chuyển sang dạng format unix  *1000
+	 
+	 $data[] = "[$time,$row_value1]";
+	
+    }
+    $result->free();
+}
+
+?>
+
+
+<script type="text/javascript">
+
+$(function () { 
+    $('#container').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Nhiệt độ phòng 1515'
+        },
+        xAxis: {
+            type: 'datetime',
+			
+        },
+        yAxis: {
+            title: {
+                text: 'Nhiệt độ'
+            }
+        },
+        series: [{
+            name: 'Vị trí 1',
+            data: [<?php echo join($data, ',') ?>]
+        }]
+    });
+	
+});
+</script>
+
+
+<div class="container">
+	<br/>
+	<h2 class="text-center">BẢNG THEO DÕI NHIỆT ĐỘ SỬ DỤNG ESP8266</h2>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading">Dashboard</div>
+                <div class="panel-body">
+                    <div id="container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
